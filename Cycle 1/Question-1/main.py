@@ -32,6 +32,7 @@ def alternative_product(number):
     difference = odd_product - even_product
     return difference
 
+# The actual code
 
 # Taking the number as user input
 number = int(input("Enter a four digit number: "))
