@@ -1,6 +1,8 @@
+# Importing math library to use the square root function
 import math
 
-
+# Function Declarations
+# Function to take user input of the three sides
 def read_sides():
     side1 = float(input("Enter the length of side 1: "))
     side2 = float(input("Enter the length of side 2: "))
@@ -26,14 +28,28 @@ def percentage_contribution(area1,area2):
     return contribution1,contribution2
 
 
+def is_valid_triangle(side1, side2, side3):
+    if (side1 + side2 > side3) and (side2 + side3 > side1) and (side3 + side1 > side2):
+        return True
+    else:
+        return False
+
+
+
 print("Triangle 1")
 side_a1,side_b1,side_c1 = read_sides()
+if(is_valid_triangle(side_a1,side_b1,side_c1) == False):
+    print("Please provide the lengths of a triangle that ia valid!")
+    exit()
 area_1 = find_area(side_a1,side_b1,side_c1)
 print(f"The area of the triangle is {area_1}")
 
 
 print("Triangle 2")
 side_a2,side_b2,side_c2 = read_sides()
+if(is_valid_triangle(side_a2,side_b2,side_c2) == False):
+    print("Please provide the lengths of a triangle that ia valid!")
+    exit()
 area_2 = find_area(side_a2,side_b2,side_c2)
 print(f"The area of the triangle is {area_2}")
 
