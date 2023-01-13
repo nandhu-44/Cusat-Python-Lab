@@ -5,7 +5,7 @@ the following conditions. Define a function to find each of the
 components. Finally, generate a payslip.
 """
 
-# Functions
+# Function Declarations
 # Function to read the name code and basic pay of employee
 def read_data():
     name = input("Enter the employee's name: ")
