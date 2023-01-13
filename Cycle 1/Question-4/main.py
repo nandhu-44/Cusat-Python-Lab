@@ -1,0 +1,76 @@
+"""
+4. Develop a program to perform the following task:
+a. Define a function to check whether a number is happy or not.
+b. Define a function to print all happy numbers within a range.
+c. Define a function to print first N happy numbers.Ahappy numberis a number defined by the following process:
+  • Starting with any positive integer, replace the number withthe sum of the squares of its digits.
+  • Repeat the process until the number equals 1 (where it will stay), or itloops endlessly in a cyclewhich does not include 1.
+  • Those numbers for which this processends in 1are happy.
+Note: if a number is not being happy after 100 iterations, consider it sad.
+"""
+
+# Function Declarations
+# Function to check if a number is happy or not
+def check_happy_number(number):
+    if number < 1:
+        return False
+    for i in range(100):
+        number = sum_of_squares(number)
+        if number == 1:
+            return True
+    return False
+
+# Function to find the sum of squares of digits of a number
+def sum_of_squares(number):
+    sum = 0
+    while number > 0:
+        remainder = number % 10
+        number //= 10
+        sum += remainder ** 2
+    return sum
+
+# Function to print all happy numbers in a range
+def happy_numbers_in_range(lower_limit, upper_limit):
+    happy_numbers = []
+    for i in range(lower_limit, upper_limit + 1):
+        if check_happy_number(i):
+            happy_numbers.append(i)
+    return happy_numbers
+
+# Function to print first N happy numbers
+def first_n_happy_numbers(n):
+    return happy_numbers_in_range(1, n)
+
+# Function to iterate the list and return a string
+def list_to_string(list):
+    string = ""
+    for i in list:
+        string += str(i) + ", "
+    return string[:-2]
+
+# Main Program
+# Checking if a number is happy or not
+number = int(input("Enter a number: "))
+if check_happy_number(number):
+    print(f"{number} is a happy number!")
+else:
+    print(f"{number} is not a happy number!")
+
+print()
+
+# Printing all happy numbers in a range
+lower_limit = int(input("Enter the lower limit: "))
+upper_limit = int(input("Enter the upper limit: "))
+happy_numbers = happy_numbers_in_range(lower_limit, upper_limit)
+
+if len(happy_numbers) == 0:
+    print("There are no happy numbers in the given range!")
+else:
+    print(f"The happy numbers in the range {lower_limit} to {upper_limit} are: {list_to_string(happy_numbers)}")
+
+print()
+
+# Printing first N happy numbers
+n = int(input("Enter the value of N: "))
+happy_numbers = first_n_happy_numbers(n)
+print(f"The first {n} happy numbers are: {list_to_string(happy_numbers)}")
