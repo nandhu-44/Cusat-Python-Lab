@@ -77,6 +77,6 @@ else:
 print()
 
 # Printing first N happy numbers
-n = int(input("Enter the no of terms: "))
+n = int(input("Enter the no of terms(happy numbers) to print: "))
 happy_numbers = first_n_happy_numbers(n)
 print(f"The first {n} happy numbers are: {list_to_string(happy_numbers)}")
