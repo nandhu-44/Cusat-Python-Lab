@@ -39,22 +39,28 @@ def happy_numbers_in_range(lower_limit, upper_limit):
 
 # Function to print first N happy numbers
 def first_n_happy_numbers(n):
-    return happy_numbers_in_range(1, n)
+    happy_numbers = []
+    i = 1
+    while len(happy_numbers) < n:
+        if check_happy_number(i):
+            happy_numbers.append(i)
+        i += 1
+    return happy_numbers
 
 # Function to iterate the list and return a string
 def list_to_string(list):
     string = ""
     for i in list:
-        string += str(i) + ", "
+        string += f"{i}, "
     return string[:-2]
 
 # Main Program
 # Checking if a number is happy or not
 number = int(input("Enter a number: "))
 if check_happy_number(number):
-    print(f"{number} is a happy number!")
+    print(f"{number} is a happy number")
 else:
-    print(f"{number} is not a happy number!")
+    print(f"{number} is not a happy number")
 
 print()
 
@@ -66,11 +72,11 @@ happy_numbers = happy_numbers_in_range(lower_limit, upper_limit)
 if len(happy_numbers) == 0:
     print("There are no happy numbers in the given range!")
 else:
-    print(f"The happy numbers in the range {lower_limit} to {upper_limit} are: {list_to_string(happy_numbers)}")
+    print(f"There are {len(happy_numbers)} happy numbers in the range from {lower_limit} to {upper_limit} which are: {list_to_string(happy_numbers)}")
 
 print()
 
 # Printing first N happy numbers
-n = int(input("Enter the value of N: "))
+n = int(input("Enter the no of terms: "))
 happy_numbers = first_n_happy_numbers(n)
 print(f"The first {n} happy numbers are: {list_to_string(happy_numbers)}")
