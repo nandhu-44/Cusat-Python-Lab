@@ -27,14 +27,14 @@ def generate_payment_slip(name,code,basic_pay):
         pt = 20
         pf = (8/100) * basic_pay
         it = 0.0
-        # Completed upto here
     elif basic_pay >= 10000 and basic_pay < 30000:
-        da = 0.1 * basic_pay
-        hra = 0.15 * basic_pay
-        ma = 0.05 * basic_pay
-        pt = 0.0
-        pf = 0.1 * basic_pay
+        da = (7.5/100) * basic_pay
+        hra = (5/100) * basic_pay
+        ma = 2500
+        pt = 60
+        pf = (8/100) * basic_pay
         it = 0.0
+        # Complete the code here
     elif basic_pay >= 30000 and basic_pay < 50000:
         da = 0.2 * basic_pay
         hra = 0.25 * basic_pay
