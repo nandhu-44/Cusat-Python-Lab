@@ -1,3 +1,10 @@
+"""
+3. Develop a program to read the employee's name, code, and basic pay
+and calculate the gross salary, deduction, and net salary according to
+the following conditions. Define a function to find each of the
+components. Finally, generate a payslip.
+"""
+
 # Functions
 # Function to read the name code and basic pay of employee
 def read_data():
@@ -75,6 +82,7 @@ Net Salary                  :   ₹{net_salary}
 """
     print(content)
 
-# Main
+# Main Program
+# Take input from user and generate payment slip
 name,code,basic_pay = read_data()
 generate_payment_slip(name,code,basic_pay)
