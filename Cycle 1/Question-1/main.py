@@ -7,7 +7,6 @@ and the product of digits at the even position.
 """
 
 # Function Declarations
-
 # Function to extract digits and return them in the form of a list.
 def extract_digits(number):
     digits = []
@@ -32,9 +31,10 @@ def alternative_product(number):
     difference = odd_product - even_product
     return difference
 
-# The actual code
+# Main Program
 
 # Taking the number as user input
+print()
 number = int(input("Enter a four digit number: "))
 
 # Terminating program if the number is not 4 digit number
@@ -42,18 +42,38 @@ if len(extract_digits(number)) != 4 :
     print("Please provide a four digit number!")
     exit()
 
-# Program to find the sum of digits
-sum = 0
-for i in extract_digits(number):
-    sum += i
-print(f"The sum of the digits of {number} is {sum}")
-
-# Program to reverse the number
-reverse_of_number = reverse(number)
-print(f"The reverse of {number} is {reverse_of_number}")
-
-# Program to find the difference of products in odd and even positions of the number
-difference_of_products = alternative_product(number)
-print(f"The difference of the products of digits in odd and even places is {difference_of_products}")
-
-
+yes = True
+content = """
+______ Main Menu ______
+1. Sum of digits
+2. Reverse
+3. Difference between the product of digits at the odd position and the product of digits at the even position.
+4. Exit
+"""
+while yes:
+    print(content)
+    choice = int(input("Enter your choice: "))
+    print()
+    print("______________________________________________________________________________________________")
+    print()
+    if choice == 1:
+        # Program to find the sum of digits
+        sum = 0
+        for i in extract_digits(number):
+            sum += i
+        print(f"The sum of the digits of {number} is {sum}")
+    elif choice == 2:
+        # Program to reverse the number
+        reverse_of_number = reverse(number)
+        print(f"The reverse of {number} is {reverse_of_number}")
+    elif choice == 3:
+        # Program to find the difference of products in odd and even positions of the number
+        difference_of_products = alternative_product(number)
+        print(f"The difference of the products of digits in odd and even places is {difference_of_products}")
+    elif choice == 4:
+        print("Thank you for using the program!")
+        yes = False
+    else:
+        print("Please enter a valid choice!")
+    print("______________________________________________________________________________________________")
+    print()
