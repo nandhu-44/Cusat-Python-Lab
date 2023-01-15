@@ -83,6 +83,27 @@ Net Salary                  :   ₹{net_salary}
     print(content)
 
 # Main Program
-# Take input from user and generate payment slip
-name,code,basic_pay = read_data()
-generate_payment_slip(name,code,basic_pay)
+
+yes = True
+content = """
+______ Main Menu ______
+1. Generate Payment Slip
+2. Exit
+"""
+while yes:
+    print(content)
+    choice = int(input("Enter your choice: "))
+    print()
+    print("______________________________________________________________________________________________")
+    print()
+    if choice == 1:
+        # Take input from user and generate payment slip
+        name,code,basic_pay = read_data()
+        generate_payment_slip(name,code,basic_pay)
+    elif choice == 2:
+        print("Thank you for using the program! ")
+        yes = False
+    else:
+        print("Please enter a valid choice!")
+    print("______________________________________________________________________________________________")
+    print()
