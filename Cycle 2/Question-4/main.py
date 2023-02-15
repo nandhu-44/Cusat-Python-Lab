@@ -13,23 +13,22 @@ import random
 
 # Defining the Box class
 class Box:
-    # Constructor with 1 argument for cube 
-    def __init__(self, arg1):
-        self.length = arg1
-        self.width = arg1
-        self.height = arg1
-    
-    # Constructor with 2 arguments for square prism
-    def __init__(self, arg1, arg2) :
-        self.length = arg1
-        self.width = arg1
-        self.height = arg2
-    
-    # Constructor with 3 arguments for rectangular prism
-    def __init__(self, arg1, arg2, arg3) :
-        self.length = arg1
-        self.width = arg2
-        self.height = arg3
+    def __init__(self, length, width=None, height=None):
+        self.length = length
+        # One parameter is passed, so it is a cube
+        if width is None and height is None:
+            self.width = length
+            self.height = length
+        # Two parameters are passed, so it is a square prism
+        elif width is not None and height is None:
+            self.width = width
+            self.height = length
+        # Three parameters are passed, so it is a rectangular prism
+        else:
+            self.width = width
+            self.height = height
+        self.area = self.calculate_area()
+        self.volume = self.calculate_volume()
         
     # Function to calculate the surface area of the box
     def calculate_area(self):
@@ -49,17 +48,23 @@ class Box:
 
 
 # Main Program 
-# Creating a list of 10 boxes with random dimensions
-list_of_boxes = [ Box(random.randint(1, 10), random.randint(1, 10), random.randint(1, 10)) for i in range(10) ]
+# Generating a list of 4 rectangular prisms, 3 square prisms and 3 cubes
+list_of_rectangular_prisms = [ Box(random.randint(1, 10), random.randint(1, 10), random.randint(1, 10)) for i in range(4)]
+list_of_square_prisms = [ Box(random.randint(1, 10), random.randint(1, 10)) for i in range(3)]
+list_of_cubes = [ Box(random.randint(1, 10)) for i in range(3)]
+# Combining all the lists into a single list of 10 boxes of random dimensions
+list_of_boxes = list_of_rectangular_prisms + list_of_square_prisms + list_of_cubes
 
-yes = True
+# Shuffling the list to randomize the order of the boxes
+random.shuffle(list_of_boxes)
+
 content = """
 ____Main Menu____
 1. Show all the boxes
 2. Get maximum volume:area ratio
 3. Exit
 """
-while yes:
+while True:
     print(content)
     choice = int(input("Enter your choice: "))
     print()
@@ -71,7 +76,8 @@ while yes:
         print(f"Box {box_ratio.index(max(box_ratio))+ 1} has the maximum volume:area ratio of {round(max(box_ratio),3)}")
     elif choice == 3:
         print("Thank you for using the program!")
-        yes = False
+        break
     else:
         print("Please enter a valid choice!")
     print()
+print()
