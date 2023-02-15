@@ -40,7 +40,7 @@ class Box:
     
     # Function to calculate the volume:area ratio of the box
     def get_volume_area_ratio(self):
-        return self.calculate_volume() / self.calculate_area()
+        return self.volume / self.area
     
     # Overloading the __str__ method to print the box
     def __str__(self):
