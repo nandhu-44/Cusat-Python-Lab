@@ -78,7 +78,7 @@ while True:
         print()
         contents_as_lines = read_as_lines("iris.json")
         for line in contents_as_lines:
-            print(line)
+            print(line.replace("\n", "\\n"))
     elif choice == "2":
         print("Contents of the file 'iris.json' read as json: ")
         print()
