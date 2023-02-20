@@ -12,9 +12,7 @@ from tabulate import tabulate
 
 #  Function to calculate the number of pairs of rabbits in the first N months
 def calculate_rabbits(months):
-    if months == 1:
-        return 1
-    elif months == 2:
+    if months == 1 or months == 2:
         return 1
     else:
         return calculate_rabbits(months - 1) + calculate_rabbits(months - 2)
