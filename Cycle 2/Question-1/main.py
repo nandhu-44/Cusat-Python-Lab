@@ -17,6 +17,7 @@ def calculate_rabbits(months):
     else:
         return calculate_rabbits(months - 1) + calculate_rabbits(months - 2)
 
+
 # Main program
 print()
 
@@ -26,5 +27,6 @@ print()
 
 # Printing the table
 rabbit_table = [[i, calculate_rabbits(i)] for i in range(1, months + 1)]
-print(tabulate(rabbit_table, headers=["Month", "Number of pairs of rabbits"], tablefmt="fancy_grid"))
+print(tabulate(rabbit_table, headers=[
+      "Month", "Number of pairs of rabbits"], tablefmt="fancy_grid"))
 print()
