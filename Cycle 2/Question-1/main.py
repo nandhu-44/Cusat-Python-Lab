@@ -27,4 +27,6 @@ months = int(input("Enter the number of months: "))
 print()
 
 # Printing the table
-print(tabulate([[i, calculate_rabbits(i)] for i in range(1, months + 1)], headers=["Month", "Number of pairs of rabbits"], tablefmt="fancy_grid"))
+rabbit_table = [[i, calculate_rabbits(i)] for i in range(1, months + 1)]
+print(tabulate(rabbit_table, headers=["Month", "Number of pairs of rabbits"], tablefmt="fancy_grid"))
+print()
