@@ -1,7 +1,11 @@
 """
-
+5. Write a program to create a parent class, 3DShapes, with methods
+printVolume() and printArea(), which prints the Volume and Area,
+respectively. Create classes Cylinder and Sphere by inheriting
+3DShapes class. Using these child classes, calculate and print the
+volume and area of a cylinder and sphere.
 """
-
+# Base class
 class __3DShapes__:
     def print_area(self,shape):
         print(f"Area of the {shape} is: {self.area} ")
@@ -9,7 +13,7 @@ class __3DShapes__:
     def print_volume(self,shape):
         print(f"Volume of the {shape} is: {self.volume} ")
 
-
+# Inherited class 1 for cylinder
 class Cylinder(__3DShapes__):
     def __init__(self, radius, height):
         self.radius = radius
@@ -23,6 +27,7 @@ class Cylinder(__3DShapes__):
     def calculate_volume(self):
         return round(3.14 * (self.radius ** 2) * self.height, 2)
 
+# Inherited class 2 for sphere
 class Sphere(__3DShapes__):
     def __init__(self, radius):
         self.radius = radius
@@ -37,11 +42,13 @@ class Sphere(__3DShapes__):
     
 # Main program
 print()
+# Taking input from the user for radius and height of the cylinder
 print("-----Cylinder-----")
 radius = float(input("Enter radius of the cylinder: "))
 height = float(input("Enter height of the cylinder: "))
 cylinder = Cylinder(radius, height)
 print()
+# Taking input from the user for radius of the sphere
 print("-----Sphere-----")
 radius = float(input("Enter radius of the sphere: "))
 sphere = Sphere(radius)
