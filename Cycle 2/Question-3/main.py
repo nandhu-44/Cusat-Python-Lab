@@ -98,7 +98,7 @@ while True:
         for flower in sorted_by_area:
             print(flower)
     elif choice == "6":
-        print("Thank you for using the program!")
+        print("Thank you for using the program.")
         break
     else:
         print("Please provide a valid choice!")

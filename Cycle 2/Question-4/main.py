@@ -59,7 +59,8 @@ list_of_boxes = list_of_rectangular_prisms + list_of_square_prisms + list_of_cub
 random.shuffle(list_of_boxes)
 
 content = """
-____Main Menu____
+----------------------------------------------------------------------------------------------------
+-----Main Menu-----
 1. Show all the boxes
 2. Get maximum volume:area ratio
 3. Exit
@@ -68,6 +69,8 @@ while True:
     print(content)
     choice = int(input("Enter your choice: "))
     print()
+    print("----------------------------------------------------------------------------------------------------")
+    print()
     if choice == 1:
         for box in list_of_boxes:
             print(f"Box {list_of_boxes.index(box) + 1}: {box}")
@@ -75,9 +78,8 @@ while True:
         box_ratio = [ box.get_volume_area_ratio() for box in list_of_boxes ]
         print(f"Box {box_ratio.index(max(box_ratio))+ 1} has the maximum volume:area ratio of {round(max(box_ratio),3)}")
     elif choice == 3:
-        print("Thank you for using the program!")
+        print("Thank you for using the program.")
         break
     else:
         print("Please enter a valid choice!")
-    print()
 print()
