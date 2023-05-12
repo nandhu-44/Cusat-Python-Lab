@@ -7,7 +7,6 @@
 •  Print all palindrome substrings.Define function for each of the task
 """
 
-# Function Declarations
 # Function to return all possible substrings
 def all_substrings(string):
     substrings = set()
@@ -17,7 +16,7 @@ def all_substrings(string):
     return list(substrings)
 
 # Function to return all possible substrings of length K
-def substrings_of_length_k(string, k):
+def substr_len_k(string, k):
     if k > len(string):
         return []
     substrings = all_substrings(string)
@@ -27,19 +26,19 @@ def substrings_of_length_k(string, k):
             k_length_substrings.append(i)   
     return k_length_substrings
 
-# Function to return all possible substrings of length K with N distinct characters
-def substrings_of_length_k_n_distinct(string, k, n):
+# Function to return all possible substrings of length K 
+def substr_len_k_n_dist(string, k, n):
     if k > len(string) or n > len(string) or n > k:
         return []
-    substrings = substrings_of_length_k(string, k)
+    substrings = substr_len_k(string, k)
     substrings_n_distinct = []
     for i in substrings:
         if len(set(i)) == n:
             substrings_n_distinct.append(i)
     return substrings_n_distinct
     
-# Function to return substring(s) of length maximum length with N distinct characters
-def max_substring_n_distinct(string, n):
+# Function to return substring(s) of  with N distinct characters
+def max_str_n_dist(string, n):
     substrings = []
     for i in range(0,len(string)+1):
         for j in range(i+1,len(string)+1):
@@ -47,12 +46,14 @@ def max_substring_n_distinct(string, n):
             distinct = set(s)
             if len(distinct) == n:
                 substrings.append(s)
+    if not substrings:
+        return []
     max_len = len(max(substrings, key=len))
     return [i for i in substrings if len(i) == max_len]
 
 
 # Function to return all palindrome substrings
-def palindrome_substrings(string):
+def palindrome_substr(string):
     substrings = []
     for i in range(len(string)):
         for j in range(i, len(string)):
@@ -62,14 +63,14 @@ def palindrome_substrings(string):
     return sorted(substrings)
 
 # Function to iterate the list and return a string
-def list_to_string(list):
+def to_string(list):
     string = ""
     for i in list:
         string += f"{i}, "
     return string[:-2]
     
 # Function to remove duplicates from a list
-def remove_duplicates(list):
+def remove_dupes(list):
     new_list = []
     for i in list:
         if i not in new_list:
@@ -77,11 +78,7 @@ def remove_duplicates(list):
     return new_list
 
 # Main Program
-# Read string from user
-print()
 string = input("Enter the string: ")
-print()
-
 yes = True
 content = """
 1. Print all possible substrings.
@@ -91,40 +88,38 @@ content = """
 5. Print all palindrome substrings.
 6. Exit
 """
+print(content)
 while yes:
-    print(content)
     choice = int(input("Enter your choice: "))
-    print()
-    print("______________________________________________________________________________________________")
-    print()
+    print("--------------------------------------------------------------------")
     if choice == 1:
-        output = list_to_string(remove_duplicates(all_substrings(string)))
+        output = to_string(remove_dupes(all_substrings(string)))
         print(f"All possible substrings are : {output}")
     elif choice == 2:
         k = int(input("Enter length of substring: "))
-        output_list = substrings_of_length_k(string, k)
+        output_list = substr_len_k(string, k)
         if len(output_list) == 0:
-            print(f"No substring of length {k} exists!")
+            print(f"No such substring exists!")
         else:
-            output = list_to_string(remove_duplicates(output_list))
-            print(f"All possible substrings of length {k} are : {output}")
+            output = to_string(remove_dupes(output_list))
+            print(f"Substrings of length {k} are : {output}")
     elif choice == 3:
         k = int(input("Enter length of substring: "))
         n = int(input("Enter number of distinct characters: "))
-        output = list_to_string(remove_duplicates(substrings_of_length_k_n_distinct(string, k, n)))
+        output = to_string(remove_dupes(substr_len_k_n_dist(string, k, n)))
         if len(output) == 0:
-            print(f"No substring of length {k} with {n} distinct characters exists!")
+            print(f"No such substring exists!")
         else:
-            print(f"All possible substrings of length {k} with {n} distinct characters are : {output}")
+            print(f"Substrings of length {k} with {n} distinct : {output}")
     elif choice == 4:
         n = int(input("Enter number of distinct characters: "))
-        output = list_to_string(remove_duplicates(max_substring_n_distinct(string, n)))
+        output = to_string(remove_dupes(max_str_n_dist(string, n)))
         if len(output) == 0:
-            print(f"No substring of length maximum length with {n} distinct characters exists!")
+            print(f"No such substring exists!")
         else:
-            print(f"Substring(s) of length maximum length with {n} distinct characters are : {output}")
+            print(f"Substring(s) of max with {n} distinct : {output}")
     elif choice == 5:
-        output = list_to_string(remove_duplicates(palindrome_substrings(string)))
+        output = to_string(remove_dupes(palindrome_substr(string)))
         if len(output) == 0:
             print("No palindrome substring exists!")
         else:
@@ -134,5 +129,4 @@ while yes:
         yes = False
     else:
         print("Please enter a valid choice!")
-    print("______________________________________________________________________________________________")
-    print()
+    print("--------------------------------------------------------------------")

@@ -47,16 +47,14 @@ def get_sepal_and_petal_area(dictionary_list):
 # Function to sort the list of dictionaries according to the total area are sepal and petal
 def sort_by_total_area(dictionary_list):
     for flower in dictionary_list:
-        total_area = flower["sepalLength"] * flower["sepalWidth"] + flower["petalLength"] * flower["petalWidth"]
+        total_area = flower["sepalLength"] * flower["sepalWidth"] 
+        + flower["petalLength"] * flower["petalWidth"]
         total_area = round(total_area, 2)
         flower["totalArea"] = total_area
     return sorted(dictionary_list, key=lambda flower: flower["totalArea"])
 
-
 # Main program
-
-contents = """
-----------------------------------------------------------------------------------------------------
+contents = """---------------------------------------------------------
 -----Main Menu-----
 1. Read the file 'iris.json' as a text file
 2. Read the file 'iris.json' as a dictionary
@@ -65,23 +63,17 @@ contents = """
 5. Sort the list of dictionaries according to the total area are sepal and petal
 6. Exit
 """
-print()
-
+print(contents)
 while True:
-    print(contents)
     choice = input("Enter your choice: ")
-    print()
-    print("----------------------------------------------------------------------------------------------------")
-    print()
+    print("\n---------------------------------------------------------\n")
     if choice == "1":
         print("Contents of the file 'iris.json' read as lines: ")
-        print()
         contents_as_lines = read_as_lines("iris.json")
         for line in contents_as_lines:
             print(line.replace("\n", "\\n"))
     elif choice == "2":
-        print("Contents of the file 'iris.json' read as json: ")
-        print()
+        print("Contents of the file 'iris.json' read as json: \n")
         contents_as_json = read_as_dict("iris.json")
         for dictionary in contents_as_json:
             print(dictionary)
@@ -102,4 +94,3 @@ while True:
         break
     else:
         print("Please provide a valid choice!")
-print()

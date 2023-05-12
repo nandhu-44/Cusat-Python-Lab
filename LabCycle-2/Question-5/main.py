@@ -22,7 +22,8 @@ class Cylinder(__3DShapes__):
         self.volume = self.calculate_volume()
 
     def calculate_area(self):
-        return round((2 * 3.14 * self.radius * self.height) + (2 * 3.14 * self.radius ** 2), 2)
+        return round((2 * 3.14 * self.radius * self.height) +
+                      (2 * 3.14 * self.radius ** 2), 2)
     
     def calculate_volume(self):
         return round(3.14 * (self.radius ** 2) * self.height, 2)
@@ -41,32 +42,24 @@ class Sphere(__3DShapes__):
         return round((4/3) * 3.14 * (self.radius ** 3), 2)
     
 # Main program
-print()
-# Taking input from the user for radius and height of the cylinder
 print("-----Cylinder-----")
 radius = float(input("Enter radius of the cylinder: "))
 height = float(input("Enter height of the cylinder: "))
 cylinder = Cylinder(radius, height)
-print()
-# Taking input from the user for radius of the sphere
 print("-----Sphere-----")
 radius = float(input("Enter radius of the sphere: "))
 sphere = Sphere(radius)
 
 contents = """
-----------------------------------------------------------------------------------------------------
+----------------------------------------------------------
 -----Main Menu-----
 1. Print area and volume of the cylinder
 2. Print area and volume of the sphere
-3. Exit
-"""
-
+3. Exit"""
+print(contents)
 while True:
-    print(contents)
+    print("----------------------------------------------------------")
     choice = int(input("Enter your choice: "))
-    print()
-    print("----------------------------------------------------------------------------------------------------")
-    print()
     if choice == 1:
         cylinder.print_area("cylinder")
         cylinder.print_volume("cylinder")

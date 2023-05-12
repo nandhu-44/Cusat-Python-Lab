@@ -34,28 +34,25 @@ if len(extract_digits(number)) != 4 :
 
 yes = True
 content = """
-______ Main Menu ______
+----- Main Menu -----
 1. Sum of digits
 2. Reverse
 3. Difference between the product of digits
-4. Exit
-"""
+4. Exit"""
+print(content)
+print("------------------------------------------\n")
 while yes:
-    print(content)
     choice = int(input("Enter your choice: "))
-    print("__________________________________________")
+    print("------------------------------------------\n")
     if choice == 1:
-        # Program to find the sum of digits
         sum = 0
         for i in extract_digits(number):
             sum += i
         print(f"The sum of the digits of {number} is {sum}")
     elif choice == 2:
-        # Program to reverse the number
         reverse_of_number = reverse(number)
         print(f"The reverse of {number} is {reverse_of_number}")
     elif choice == 3:
-        # Program to find the difference of products
         difference_of_products = alternative_product(number)
         print(f"The difference of the products is {difference_of_products}")
     elif choice == 4:
@@ -63,4 +60,4 @@ while yes:
         yes = False
     else:
         print("Please enter a valid choice!")
-    print("__________________________________________")
+    print("\n------------------------------------------\n")

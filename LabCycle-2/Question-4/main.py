@@ -9,7 +9,7 @@ details of the box with maximum volume: area ratio
 """
 
 # Importing random module to generate random numbers
-import random
+from random import randint,shuffle
 
 # Defining the Box class
 class Box:
@@ -32,7 +32,8 @@ class Box:
         
     # Function to calculate the surface area of the box
     def calculate_area(self):
-        return 2 * (self.length * self.width + self.length * self.height + self.width * self.height)
+        return 2 * (self.length * self.width + 
+        self.length * self.height + self.width * self.height)
     
     # Function to calculate the volume of the box
     def calculate_volume(self):
@@ -47,39 +48,36 @@ class Box:
         return f"Box({self.length}, {self.width}, {self.height})"
 
 
-# Main Program 
 # Generating a list of 4 rectangular prisms, 3 square prisms and 3 cubes
-list_of_rectangular_prisms = [ Box(random.randint(1, 10), random.randint(1, 10), random.randint(1, 10)) for i in range(4)]
-list_of_square_prisms = [ Box(random.randint(1, 10), random.randint(1, 10)) for i in range(3)]
-list_of_cubes = [ Box(random.randint(1, 10)) for i in range(3)]
+list_rec_prisms = [ Box(randint(1, 10), 
+            randint(1, 10), randint(1, 10)) for i in range(4)]
+list_square_prisms = [ Box(randint(1, 10),
+                              randint(1, 10)) for i in range(3)]
+list_of_cubes = [ Box(randint(1, 10)) for i in range(3)]
 # Combining all the lists into a single list of 10 boxes of random dimensions
-list_of_boxes = list_of_rectangular_prisms + list_of_square_prisms + list_of_cubes
+list_of_boxes = list_rec_prisms + list_square_prisms + list_of_cubes
 
 # Shuffling the list to randomize the order of the boxes
-random.shuffle(list_of_boxes)
-
+shuffle(list_of_boxes)
 content = """
-----------------------------------------------------------------------------------------------------
+-----------------------------------------------------------
 -----Main Menu-----
 1. Show all the boxes
 2. Get maximum volume:area ratio
-3. Exit
-"""
+3. Exit"""
+print(content)
 while True:
-    print(content)
+    print("\n-----------------------------------------------------------\n")
     choice = int(input("Enter your choice: "))
-    print()
-    print("----------------------------------------------------------------------------------------------------")
-    print()
     if choice == 1:
         for box in list_of_boxes:
             print(f"Box {list_of_boxes.index(box) + 1}: {box}")
     elif choice == 2:
         box_ratio = [ box.get_volume_area_ratio() for box in list_of_boxes ]
-        print(f"Box {box_ratio.index(max(box_ratio))+ 1} has the maximum volume:area ratio of {round(max(box_ratio),3)}")
+        print(f"Box {box_ratio.index(max(box_ratio))+ 1}",
+        f"has the maximum volume:area ratio of {round(max(box_ratio),3)}")
     elif choice == 3:
         print("Thank you for using the program.")
         break
     else:
         print("Please enter a valid choice!")
-print()
