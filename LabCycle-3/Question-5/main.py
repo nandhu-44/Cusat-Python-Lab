@@ -3,246 +3,253 @@ from tkinter.filedialog import askopenfilename, asksaveasfile
 from tkinter.messagebox import showinfo
 from tkinter.ttk import Style, Treeview
 import pickle
+import tabulate
+from fpdf import FPDF
 
-global listOfVehicles
-global sortedList
-listOfVehicles = list()
-vehicle_attributes = ["ownerName", "vendor", "model", "type", "registrationNumber", "engineNumber", "mileage"]
-vehicleDetails = dict.fromkeys(vehicle_attributes, None)
+class VehicleAttributes:
+    _keys = ["id", "ownerName", "vendor", "model", "type",
+             "registrationNumber", "engineNumber", "mileage"]
+    _dataBase = dict.fromkeys(_keys, None)
 
-# Hardcoded data
-vehicle1 = {
-    'ownerName': 'John Doe',
-    'vendor': 'Ford',
-    'model': 'Mustang',
-    'type': 'Sports Car',
-    'registrationNumber': 'ABC123',
-    'engineNumber': '123456789',
-    'mileage': 10.5
-}
+class VehicleDatabase(VehicleAttributes):
+    _vehicles = []
+    _id_counter = 0
+    def addEntries(self):
+        entries = [
+            [1, "Maruti Suzuki", "Swift", "Hatchback", 
+                "Petrol", "MH01AB1234", "1234567890", 21.4],
+            [2, "Hyundai", "Creta", "SUV", "Diesel", 
+                "MH02CD5678", "0987654321", 17.1],
+            [3, "Tata Motors", "Nexon", "SUV", "Petrol", 
+                "MH03EF9012", "2345678901", 18.0]
+        ]
+        
+        for entry in entries:
+            self._id_counter += 1
+            entry[0] = self._id_counter
+            vehicle = dict(zip(self._dataBase.keys(), entry))
+            self._vehicles.append(vehicle)
 
-vehicle2 = {
-    'ownerName': 'Jane Smith',
-    'vendor': 'Chevrolet',
-    'model': 'Camaro',
-    'type': 'Sports Car',
-    'registrationNumber': 'XYZ789',
-    'engineNumber': '987654321',
-    'mileage': 9.2
-}
+    def deleteEntry(self, vehicleId):
+        for i in range(len(self._vehicles)):
+            if self._vehicles[i]["id"] == vehicleId:
+                del self._vehicles[i]
+                break
+        else:
+            print("Invalid ID")
 
-# Add hardcoded data to the listOfVehicles
-listOfVehicles.append(vehicle1)
-listOfVehicles.append(vehicle2)
+    def modifyEntry(self, vehicleId, attribute, value):
+        found = False
+        for vehicle in self._vehicles:
+            if vehicle["id"] == vehicleId:
+                if attribute in self._dataBase.keys():
+                    vehicle[attribute] = value
+                    found = True
+                    break
+                else:
+                    print("Invalid attribute")
+                    break
+        if not found:
+            print("Invalid ID")
 
-def addList():
-    global listOfVehicles
-    treeList.insert(parent='', index='end', text="", values=(
-    owner.get(), vendor.get(), model.get(), typeClass.get(), regNumber.get(), engNumber.get(), mileage.get()))
-    vehicleDetails['ownerName'] = owner.get()
-    vehicleDetails['vendor'] = vendor.get()
-    vehicleDetails['model'] = model.get()
-    vehicleDetails['type'] = typeClass.get()
-    vehicleDetails['registrationNumber'] = int(regNumber.get())
-    vehicleDetails['engineNumber'] = int(engNumber.get())
-    vehicleDetails['mileage'] = float(mileage.get())
-    listOfVehicles.append(vehicleDetails.copy())
+    def generateReport(self, filename):
+        pdf = FPDF()
+        pdf.add_page()
+        header = ["Id", "Owner", "Vendor", "Model", "Type",
+                  "Registration Number", "Engine Number", "Mileage"]
+        data = [list(vehicle.values()) for vehicle in self._vehicles]
+        pdf.set_font("Arial", "B", 12)
+        for col in header:
+            pdf.cell(40, 10, col, 1, 0, "C")
+        pdf.ln()
+        pdf.set_font("Arial", "", 12)
+        for row in data:
+            for col in row:
+                pdf.cell(40, 10, str(col), 1, 0, "C")
+            pdf.ln()
+        pdf.output(filename)
 
-def filterList():
-    global listOfVehicles
-    if (owner.get() != "" or vendor.get() != "" or model.get() != "" or typeClass.get() != "" or mileage.get() != ""):
-        for item in treeList.get_children():
-            treeList.delete(item)
-    else:
-        showinfo(title="Error", message="Give a Filter Key")
-    if (owner.get() != ""):
-        filterKey = owner.get()
-        for i in listOfVehicles:
-            if i['ownerName'] == filterKey:
-                treeList.insert(parent='', index='end', text="", values=(
-                i['ownerName'], i['vendor'], i['model'], i['type'], i['registrationNumber'], i['engineNumber'],
-                i['mileage']))
-    elif (vendor.get() != ""):
-        filterKey = vendor.get()
-        for i in listOfVehicles:
-            if i['vendor'] == filterKey:
-                treeList.insert(parent='', index='end', text="", values=(
-                i['ownerName'], i['vendor'], i['model'], i['type'], i['registrationNumber'], i['engineNumber'],
-                i['mileage']))
-    elif (model.get() != ""):
-        filterKey = model.get()
-        for i in listOfVehicles:
-            if i['model'] == filterKey:
-                treeList.insert(parent='', index='end', text="", values=(
-                i['ownerName'], i['vendor'], i['model'], i['type'], i['registrationNumber'], i['engineNumber'],
-                i['mileage']))
-    elif (typeClass.get() != ""):
-        filterKey = typeClass.get()
-        for i in listOfVehicles:
-            if i['type'] == filterKey:
-                treeList.insert(parent='', index='end', text="", values=(
-                i['ownerName'], i['vendor'], i['model'], i['type'], i['registrationNumber'], i['engineNumber'],
-                i['mileage']))
-    elif (mileage.get() != ""):
-        filterKey = float(mileage.get())
-        for i in listOfVehicles:
-            if i['mileage'] == filterKey:
-                treeList.insert(parent='', index='end', text="", values=(
-                i['ownerName'], i['vendor'], i['model'], i['type'], i['registrationNumber'], i['engineNumber'],
-                i['mileage']))
+    def displayEntries(self, filteredList=None):
+        header = ["Id", "Owner", "Vendor", "Model", "Type",
+                  "Registration Number", "Engine Number", "Mileage"]
+        rows = [x.values() for x in filteredList] if filteredList else [
+            x.values() for x in self._vehicles]
+        print(tabulate.tabulate(rows, header, tablefmt="grid"))
 
-def delete():
-    # Get selected item to Delete
-    selection = treeList.selection()[0]
-    treeList.delete(selection)
+    def sortEntriesByMileage(self):
+        sortedList = sorted(self._vehicles, key=lambda i: i["mileage"])
+        self.displayEntries(sortedList)
 
-def loadFile():
-    # Clear the treeview list items
-    for item in treeList.get_children():
-        treeList.delete(item)
-    filetypes = (
-        ('Pickle files', '*.pkl'),
-        ('All files', '*.*')
-    )
-    global listOfVehicles
-    filename = askopenfilename(title="Open Pickle", initialdir='/', filetypes=filetypes)
-    listOfVehicles = pickle.load(open(filename, "rb"))
-    showinfo(title="Selected File", message=filename)
-    for i in listOfVehicles:
-        treeList.insert(parent='', index='end', text="", values=(
-        i['ownerName'], i['vendor'], i['model'], i['type'], i['registrationNumber'], i['engineNumber'], i['mileage']))
+    def createPickleFile(self):
+        pickle.dump(self._vehicles, open("vehicleDetails.bin", "wb"))
 
-def sortMileage():
-    # Clear the treeview list items
-    for item in treeList.get_children():
-        treeList.delete(item)
-    global listOfVehicles
-    global sortedList
-    sortedList = sorted(listOfVehicles, key=lambda i: i['mileage'])
-    for i in sortedList:
-        treeList.insert(parent='', index='end', text="", values=(
-        i['ownerName'], i['vendor'], i['model'], i['type'], i['registrationNumber'], i['engineNumber'], i['mileage']))
-    showinfo(title="Sorted", message="Sorted Successfully")
+class VehicleApp:
+    def __init__(self):
+        self.root = Tk()
+        self.root.title("Vehicle Database")
+        self.style = Style()
+        self.style.theme_use("default")
+        self.treeview = None
+        self.db = VehicleDatabase()
 
-def createPickle():
-    fileextensions = [('Pickle File', '*.pkl'), ('All Files', '*.*')]
-    file = asksaveasfile(filetypes=fileextensions, defaultextension=fileextensions)
-    pickle.dump(listOfVehicles, open(file, "wb"))
-    showinfo(title="Created File", message="Vehicle Pickle File is Created")
+    def create_treeview(self):
+        self.treeview = Treeview(self.root)
+        self.treeview["columns"] = (
+            "Owner", "Vendor", "Model", "Type", "Registration Number", "Engine Number", "Mileage"
+        )
+        self.treeview.column("#0", width=50, minwidth=50, stretch=NO)
+        self.treeview.column("Owner", width=100, minwidth=100, stretch=NO)
+        self.treeview.column("Vendor", width=100, minwidth=100, stretch=NO)
+        self.treeview.column("Model", width=100, minwidth=100, stretch=NO)
+        self.treeview.column("Type", width=100, minwidth=100, stretch=NO)
+        self.treeview.column("Registration Number", width=150, minwidth=150, stretch=NO)
+        self.treeview.column("Engine Number", width=150, minwidth=150, stretch=NO)
+        self.treeview.column("Mileage", width=100, minwidth=100, stretch=NO)
+        self.treeview.heading("#0", text="ID", anchor=CENTER)
+        self.treeview.heading("Owner", text="Owner", anchor=CENTER)
+        self.treeview.heading("Vendor", text="Vendor", anchor=CENTER)
+        self.treeview.heading("Model", text="Model", anchor=CENTER)
+        self.treeview.heading("Type", text="Type", anchor=CENTER)
+        self.treeview.heading("Registration Number", text="Registration Number", anchor=CENTER)
+        self.treeview.heading("Engine Number", text="Engine Number", anchor=CENTER)
+        self.treeview.heading("Mileage", text="Mileage", anchor=CENTER)
+        self.treeview.pack(fill=BOTH, expand=YES)
 
-# Window configuration.
-window = Tk()
-window.geometry("750x400")
-window.title("Vehicle Data")
+    def populate_treeview(self):
+        self.treeview.delete(*self.treeview.get_children())
+        for vehicle in self.db._vehicles:
+            self.treeview.insert("", END, text=str(vehicle["id"]), values=(
+                vehicle["ownerName"],
+                vehicle["vendor"],
+                vehicle["model"],
+                vehicle["type"],
+                vehicle["registrationNumber"],
+                vehicle["engineNumber"],
+                vehicle["mileage"]
+            ))
 
-# Variables to take input from the screen.
-owner = StringVar()
-vendor = StringVar()
-model = StringVar()
-typeClass = StringVar()
-regNumber = StringVar()
-engNumber = StringVar()
-mileage = StringVar()
+    def add_entry(self):
+        new_entry = [
+            None,
+            self.owner_entry.get(),
+            self.vendor_entry.get(),
+            self.model_entry.get(),
+            self.type_entry.get(),
+            self.reg_num_entry.get(),
+            self.engine_num_entry.get(),
+            float(self.mileage_entry.get())
+        ]
+        self.db._id_counter += 1
+        new_entry[0] = self.db._id_counter
+        vehicle = dict(zip(self.db._dataBase.keys(), new_entry))
+        self.db._vehicles.append(vehicle)
+        self.populate_treeview()
 
-# Row-0
-label1 = Label(window, text="Owner Name ")
-label1.grid(row=0, column=0)
+    def delete_entry(self):
+        selected_items = self.treeview.selection()
+        if len(selected_items) == 0:
+            showinfo("Error", "No entry selected.")
+            return
+        selected_id = int(self.treeview.item(selected_items[0], "text"))
+        self.db.deleteEntry(selected_id)
+        self.populate_treeview()
 
-entry1 = Entry(window, width=25, textvariable=owner)
-entry1.grid(row=0, column=1)
+    def modify_entry(self):
+        selected_items = self.treeview.selection()
+        if len(selected_items) == 0:
+            showinfo("Error", "No entry selected.")
+            return
+        selected_id = int(self.treeview.item(selected_items[0], "text"))
+        modify_window = Toplevel(self.root)
+        modify_window.title("Modify Entry")
+        attr_label = Label(modify_window, text="Attribute:")
+        attr_label.grid(row=0, column=0, padx=5, pady=5)
+        attr_entry = Entry(modify_window)
+        attr_entry.grid(row=0, column=1, padx=5, pady=5)
+        value_label = Label(modify_window, text="New Value:")
+        value_label.grid(row=1, column=0, padx=5, pady=5)
+        value_entry = Entry(modify_window)
+        value_entry.grid(row=1, column=1, padx=5, pady=5)
 
-label2 = Label(window, text="Vendor Name ")
-label2.grid(row=0, column=2)
+        def modify():
+            attribute = attr_entry.get()
+            value = value_entry.get()
+            self.db.modifyEntry(selected_id, attribute, value)
+            modify_window.destroy()
+            self.populate_treeview()
+        # Creating a button to modify the entry
+        modify_button = Button(modify_window, text="Modify", command=modify)
+        modify_button.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
 
-entry2 = Entry(window, width=25, textvariable=vendor)
-entry2.grid(row=0, column=3)
+    def generate_report(self):
+        filename = asksaveasfile(mode="wb", defaultextension=".pdf")
+        if filename is None:
+            return
+        self.db.generateReport(filename.name)
+        showinfo("Success", "Report generated successfully.")
 
-# Row-1
-label3 = Label(window, text="Model Name ")
-label3.grid(row=1, column=0)
+    def display_entries(self):
+        self.db.displayEntries()
 
-entry3 = Entry(window, width=25, textvariable=model)
-entry3.grid(row=1, column=1)
+    def sort_entries(self):
+        self.db.sortEntriesByMileage()
 
-label4 = Label(window, text="Type  ")
-label4.grid(row=1, column=2)
+    def create_pickle_file(self):
+        self.db.createPickleFile()
+        showinfo("Success", "Pickle file created successfully.")
 
-entry4 = Entry(window, width=25, textvariable=typeClass)
-entry4.grid(row=1, column=3)
+    def setup_ui(self):
+        self.create_treeview()
+        # Creating labels and entry fields
+        owner_label = Label(self.root, text="Owner:")
+        owner_label.pack()
+        self.owner_entry = Entry(self.root)
+        self.owner_entry.pack()
+        vendor_label = Label(self.root, text="Vendor:")
+        vendor_label.pack()
+        self.vendor_entry = Entry(self.root)
+        self.vendor_entry.pack()
+        model_label = Label(self.root, text="Model:")
+        model_label.pack()
+        self.model_entry = Entry(self.root)
+        self.model_entry.pack()
+        type_label = Label(self.root, text="Type:")
+        type_label.pack()
+        self.type_entry = Entry(self.root)
+        self.type_entry.pack()
+        reg_num_label = Label(self.root, text="Registration Number:")
+        reg_num_label.pack()
+        self.reg_num_entry = Entry(self.root)
+        self.reg_num_entry.pack()
+        engine_num_label = Label(self.root, text="Engine Number:")
+        engine_num_label.pack()
+        self.engine_num_entry = Entry(self.root)
+        self.engine_num_entry.pack()
+        mileage_label = Label(self.root, text="Mileage:")
+        mileage_label.pack()
+        self.mileage_entry = Entry(self.root)
+        self.mileage_entry.pack()
+        add_button = Button(self.root, text="Add Entry", command=self.add_entry)
+        add_button.pack(pady=5)
+        delete_button = Button(self.root, text="Delete Entry", command=self.delete_entry)
+        delete_button.pack(pady=5)
+        modify_button = Button(self.root, text="Modify Entry", command=self.modify_entry)
+        modify_button.pack(pady=5)
+        generate_button = Button(self.root, text="Generate Report", command=self.generate_report)
+        generate_button.pack(pady=5)
+        display_button = Button(self.root, text="Display Entries", command=self.display_entries)
+        display_button.pack(pady=5)
+        sort_button = Button(self.root, text="Sort Entries by Mileage", command=self.sort_entries)
+        sort_button.pack(pady=5)
+        pickle_button = Button(self.root, text="Create Pickle File", command=self.create_pickle_file)
+        pickle_button.pack(pady=5)
 
-# Row-2
-label5 = Label(window, text="Registration Number  ")
-label5.grid(row=2, column=0)
+    def run(self):
+        self.setup_ui()
+        self.db.addEntries()
+        self.populate_treeview()
+        self.root.mainloop()
 
-entry5 = Entry(window, width=25, textvariable=regNumber)
-entry5.grid(row=2, column=1)
-
-label6 = Label(window, text="Engine Number ")
-label6.grid(row=2, column=2)
-
-entry6 = Entry(window, width=25, textvariable=engNumber)
-entry6.grid(row=2, column=3)
-
-# Row - 3
-label7 = Label(window, text="Mileage")
-label7.grid(row=3, column=0)
-
-entry7 = Entry(window, width=25, textvariable=mileage)
-entry7.grid(row=3, column=1)
-
-button1 = Button(window, width=10, text="Load Pickle", bg='#99CCAA', command=loadFile)
-button1.grid(row=2, column=4)
-
-button8 = Button(window, width=10, text="Filter", bg='#99CCAA', command=filterList)
-button8.grid(row=2, column=5)
-
-# Second section
-# Row - 0
-button2 = Button(window, width=10, text="Add", bg='#99CCAA', command=addList)
-button2.grid(row=0, column=4)
-
-# Row - 1
-button4 = Button(window, width=10, text="Delete", bg='#99CCAA', command=delete)
-button4.grid(row=1, column=4)
-
-button5 = Button(window, width=10, text="Sort Mileage", bg='#99CCAA', command=sortMileage)
-button5.grid(row=1, column=5)
-
-# Row - 2
-# button6=Button(window,width=10,text="Filter",bg='#99CCAA')
-# button6.grid(row=2,column=4)
-
-button7 = Button(window, width=10, text="Create Pickle", bg='#99CCAA', command=createPickle)
-button7.grid(row=0, column=5)
-
-style = Style()
-style.theme_use("alt")
-style.configure("Treeview",
-                background="silver",
-                foreground='green'
-                )
-style.map('Treeview', background=[('selected', '#FF1800')])
-treeList = Treeview(columns=("Owner", "Vendor", "Model", "Type", "Reg Number", "Eng Number", "Mileage"), show='headings')
-
-treeList.heading("Owner", text="Owner")
-treeList.heading("Vendor", text="Vendor")
-treeList.heading("Model", text="Model")
-treeList.heading("Type", text="Type")
-treeList.heading("Reg Number", text="Reg Number")
-treeList.heading("Eng Number", text="Eng Number")
-treeList.heading("Mileage", text="Mileage")
-
-treeList['show'] = 'headings'
-
-treeList.column("Owner", width=90, anchor="center")
-treeList.column("Vendor", width=50, anchor="center")
-treeList.column("Model", width=50, anchor="center")
-treeList.column("Type", width=40, anchor="center")
-treeList.column("Reg Number", width=80, anchor="center")
-treeList.column("Eng Number", width=80, anchor="center")
-treeList.column("Mileage", width=50, anchor="center")
-
-treeList.grid(row=4, column=0, columnspan=6)
-
-window.mainloop()
+app = VehicleApp()
+app.run()
 

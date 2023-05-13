@@ -1,173 +1,126 @@
-import pygame
-import math
+import pygame as pg
+import sys
+from random import randint
 
-pygame.init()
-
-# Screen
-WIDTH = 300
-ROWS = 3
-win = pygame.display.set_mode((WIDTH, WIDTH))
-pygame.display.set_caption("TicTacToe")
-
-# Colors
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GRAY = (200, 200, 200)
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
-
-# Images
-X_IMAGE = pygame.transform.scale(
-    pygame.image.load("resources/x.png"), (80, 80))
-O_IMAGE = pygame.transform.scale(
-    pygame.image.load("resources/o.png"), (80, 80))
-
-# Fonts
-END_FONT = pygame.font.SysFont('arial', 40)
+WIN_SIZE = 400
+CELL_SIZE = WIN_SIZE // 3
+INF = float('inf')
+vec2 = pg.math.Vector2
+CELL_CENTER = vec2(CELL_SIZE / 2)
 
 
-def draw_grid():
-    gap = WIDTH // ROWS
-    x = 0
-    y = 0
+class TicTacToe:
+    def __init__(self, game):
+        self.game = game
+        self.field_image = self.get_scaled_image(
+            path='resources/field.png', res=[WIN_SIZE] * 2)
+        self.O_image = self.get_scaled_image(
+            path='resources/o.png', res=[CELL_SIZE] * 2)
+        self.X_image = self.get_scaled_image(
+            path='resources/x.png', res=[CELL_SIZE] * 2)
+        self.game_array = [[INF, INF, INF],
+                           [INF, INF, INF],
+                           [INF, INF, INF]]
+        self.player = randint(0, 1)
+        self.line_indices_array = [[(0, 0), (0, 1), (0, 2)],
+                                   [(1, 0), (1, 1), (1, 2)],
+                                   [(2, 0), (2, 1), (2, 2)],
+                                   [(0, 0), (1, 0), (2, 0)],
+                                   [(0, 1), (1, 1), (2, 1)],
+                                   [(0, 2), (1, 2), (2, 2)],
+                                   [(0, 0), (1, 1), (2, 2)],
+                                   [(0, 2), (1, 1), (2, 0)]]
+        self.winner = None
+        self.game_steps = 0
+        self.font = pg.font.Font(
+            "resources/LilitaOne-Regular.ttf", CELL_SIZE // 3)
 
-    for i in range(ROWS):
-        x = i * gap
-        pygame.draw.line(win, GRAY, (x, 0), (x, WIDTH), 3)
-        pygame.draw.line(win, GRAY, (0, x), (WIDTH, x), 3)
+    def check_winner(self):
+        for line_indices in self.line_indices_array:
+            sum_line = sum([self.game_array[i][j] for i, j in line_indices])
+            if sum_line in {0, 3}:
+                self.winner = 'XO'[sum_line == 0]
+                self.winner_line = [vec2(line_indices[0][::-1]) * CELL_SIZE + CELL_CENTER,
+                                    vec2(line_indices[2][::-1]) * CELL_SIZE + CELL_CENTER]
 
+    def run_game_process(self):
+        current_cell = vec2(pg.mouse.get_pos()) // CELL_SIZE
+        col, row = map(int, current_cell)
+        left_click = pg.mouse.get_pressed()[0]
+        if (left_click and self.game_array[row][col] == INF and 
+        not self.winner):
+            self.game_array[row][col] = self.player
+            self.player = not self.player
+            self.game_steps += 1
+            self.check_winner()
 
-def initialize_grid():
-    dis_to_cen = WIDTH // ROWS // 2
+    def draw_objects(self):
+        for y, row in enumerate(self.game_array):
+            for x, obj in enumerate(row):
+                if obj != INF:
+                    self.game.screen.blit(
+                        self.X_image if obj else self.O_image, vec2(x, y) * CELL_SIZE)
 
-    game_array = [[None, None, None], [None, None, None], [None, None, None]]
+    def draw_winner(self):
+        if self.winner:
+            pg.draw.line(self.game.screen, 'red', *
+                         self.winner_line, CELL_SIZE // 7)
+            label = self.font.render(
+                f'Player "{self.winner}" wins!', True, 'white', 'black')
+            self.game.screen.blit(
+                label, (WIN_SIZE // 2 - label.get_width() // 2, WIN_SIZE // 4))
 
-    for i in range(len(game_array)):
-        for j in range(len(game_array[i])):
-            x = dis_to_cen * (2 * j + 1)
-            y = dis_to_cen * (2 * i + 1)
-            game_array[i][j] = (x, y, "", True)
-    return game_array
+    def draw(self):
+        self.game.screen.blit(self.field_image, (0, 0))
+        self.draw_objects()
+        self.draw_winner()
 
+    @staticmethod
+    def get_scaled_image(path, res):
+        img = pg.image.load(path)
+        return pg.transform.smoothscale(img, res)
 
-def click(game_array):
-    global x_turn, o_turn, images
-    m_x, m_y = pygame.mouse.get_pos()
+    def print_caption(self):
+        pg.display.set_caption(f'Player "{"OX"[self.player]}" turn!')
+        if self.winner:
+            pg.display.set_caption(
+                f'Player "{self.winner}" wins! Press Space to Restart')
+        elif self.game_steps == 9:
+            pg.display.set_caption(f'Game Over! Press Space to Restart')
 
-    for i in range(len(game_array)):
-        for j in range(len(game_array[i])):
-            x, y, char, can_play = game_array[i][j]
-            dis = math.sqrt((x - m_x) ** 2 + (y - m_y) ** 2)
-            if dis < WIDTH // ROWS // 2 and can_play:
-                if x_turn:
-                    images.append((x, y, X_IMAGE))
-                    x_turn = False
-                    o_turn = True
-                    game_array[i][j] = (x, y, 'x', False)
-                elif o_turn:
-                    images.append((x, y, O_IMAGE))
-                    x_turn = True
-                    o_turn = False
-                    game_array[i][j] = (x, y, 'o', False)
-
-
-def has_won(game_array):
-    for row in range(len(game_array)):
-        if (game_array[row][0][2] == game_array[row][1][2] == game_array[row][2][2]) and game_array[row][0][2] != "":
-            display_message(game_array[row][0][2].upper() + " has won!")
-            return True
-
-    # Checking columns
-    for col in range(len(game_array)):
-        if (game_array[0][col][2] == game_array[1][col][2] == game_array[2][col][2]) and game_array[0][col][2] != "":
-            display_message(game_array[0][col][2].upper() + " has won!")
-            return True
-
-    # Checking main diagonal
-    if (game_array[0][0][2] == game_array[1][1][2] == game_array[2][2][2]) and game_array[0][0][2] != "":
-        display_message(game_array[0][0][2].upper() + " has won!")
-        return True
-
-    # Checking reverse diagonal
-    if (game_array[0][2][2] == game_array[1][1][2] == game_array[2][0][2]) and game_array[0][2][2] != "":
-        display_message(game_array[0][2][2].upper() + " has won!")
-        return True
-
-    return False
-
-
-def has_drawn(game_array):
-    for i in range(len(game_array)):
-        for j in range(len(game_array[i])):
-            if game_array[i][j][2] == "":
-                return False
-
-    display_message("It's a draw!")
-    return True
-
-
-def display_message(content):
-    pygame.time.delay(500)
-    win.fill(WHITE)
-    end_text = END_FONT.render(content, 1, BLACK)
-    win.blit(end_text, ((WIDTH - end_text.get_width()) //
-             2, (WIDTH - end_text.get_height()) // 2))
-
-    # Play Again Button
-    BUTTON_FONT = pygame.font.SysFont('arial', 20)
-    button_text = BUTTON_FONT.render("Play Again", 1, BLACK)
-    button_width = button_text.get_width()
-    button_height = button_text.get_height()
-    button_x = (WIDTH - button_width) // 2
-    button_y = (WIDTH + end_text.get_height()) // 2 + 20
-    pygame.draw.rect(win, GRAY, (button_x - 10, button_y - 10,
-                     button_width + 20, button_height + 20))
-    pygame.draw.rect(win, WHITE, (button_x, button_y,
-                     button_width, button_height))
-    win.blit(button_text, (button_x, button_y))
-
-    pygame.display.update()
-    pygame.time.delay(3000)
+    def run(self):
+        self.print_caption()
+        self.draw()
+        self.run_game_process()
 
 
-def render():
-    win.fill(WHITE)
-    draw_grid()
+class Game:
+    def __init__(self):
+        pg.init()
+        self.screen = pg.display.set_mode([WIN_SIZE] * 2)
+        self.clock = pg.time.Clock()
+        self.tic_tac_toe = TicTacToe(self)
 
-    # Drawing X's and O's
-    for image in images:
-        x, y, IMAGE = image
-        win.blit(IMAGE, (x - IMAGE.get_width() //
-                 2, y - IMAGE.get_height() // 2))
+    def new_game(self):
+        self.tic_tac_toe = TicTacToe(self)
 
-    pygame.display.update()
+    def check_events(self):
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                pg.quit()
+                sys.exit()
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_SPACE:
+                    self.new_game()
 
-
-def main():
-    global x_turn, o_turn, images, draw
-
-    images = []
-    draw = False
-
-    run = True
-
-    x_turn = True
-    o_turn = False
-
-    game_array = initialize_grid()
-
-    while run:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                click(game_array)
-
-        render()
-        if has_won(game_array) or has_drawn(game_array):
-            run = False
+    def run(self):
+        while True:
+            self.tic_tac_toe.run()
+            self.check_events()
+            pg.display.update()
+            self.clock.tick(60)
 
 
-while True:
-    if __name__ == '__main__':
-        main()
+if __name__ == '__main__':
+    game = Game()
+    game.run()

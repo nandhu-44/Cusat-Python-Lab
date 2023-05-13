@@ -1,5 +1,6 @@
 import pickle
 import tabulate
+from fpdf import FPDF
 
 
 class VehicleAttributes:
@@ -7,18 +8,20 @@ class VehicleAttributes:
              "registrationNumber", "engineNumber", "mileage"]
     _dataBase = dict.fromkeys(_keys, None)
 
-
 class VehicleDatabase(VehicleAttributes):
     _vehicles = []
     _id_counter = 0
 
     def addEntries(self):
         entries = [
-            [1, "John Doe", "Ford", "Mustang", "Sedan", 1234, 5678, 25.5],
-            [2, "Jane Smith", "Toyota", "Camry", "Sedan", 5678, 9012, 30.2],
-            [3, "Bob Johnson", "Honda", "Civic", "Sedan", 9012, 3456, 27.8],
+            [1, "Maruti Suzuki", "Swift", "Hatchback", 
+                "Petrol", "MH01AB1234", "1234567890", 21.4],
+            [2, "Hyundai", "Creta", "SUV", "Diesel", 
+                "MH02CD5678", "0987654321", 17.1],
+            [3, "Tata Motors", "Nexon", "SUV", "Petrol", 
+                "MH03EF9012", "2345678901", 18.0]
         ]
-
+        
         for entry in entries:
             self._id_counter += 1
             entry[0] = self._id_counter
@@ -47,6 +50,23 @@ class VehicleDatabase(VehicleAttributes):
         if not found:
             print("Invalid ID")
 
+    def generateReport(self, filename):
+        pdf = FPDF()
+        pdf.add_page()
+        header = ["Id", "Owner", "Vendor", "Model", "Type",
+                  "Registration Number", "Engine Number", "Mileage"]
+        data = [list(vehicle.values()) for vehicle in self._vehicles]
+        pdf.set_font("Arial", "B", 12)
+        for col in header:
+            pdf.cell(40, 10, col, 1, 0, "C")
+        pdf.ln()
+        pdf.set_font("Arial", "", 12)
+        for row in data:
+            for col in row:
+                pdf.cell(40, 10, str(col), 1, 0, "C")
+            pdf.ln()
+        pdf.output(filename)
+
     def displayEntries(self, filteredList=None):
         header = ["Id", "Owner", "Vendor", "Model", "Type",
                   "Registration Number", "Engine Number", "Mileage"]
@@ -71,29 +91,22 @@ class VehicleDatabase(VehicleAttributes):
         idList = [vehicle["id"] for vehicle in self._vehicles]
         self._id_counter = max(idList)
 
-
 def main():
     vehicleDB = VehicleDatabase()
     vehicleDB.addEntries()
     vehicleDB.displayEntries()
-
-    print()
-    print("Sorted by mileage : ")
+    print("\nSorted by mileage : ")
     vehicleDB.sortEntriesByMileage()
-    print()
-    print("Deleted entry with ID 2 : ")
+    print("\nDeleted entry with ID 2 : ")
     vehicleDB.deleteEntry(2)
     vehicleDB.displayEntries()
-    print()
-    print("Modified entry with ID 3 : ")
+    print("\nModified entry with ID 3 : ")
     vehicleDB.modifyEntry(3, "model", "Accord")
     vehicleDB.displayEntries()
-    print()
-    print("Filtered by vendor : ")
-    vehicleDB.filterEntriesByAttribute("vendor", "Honda")
-
+    print("\nFiltered by vendor : ")
+    vehicleDB.filterEntriesByAttribute("vendor", "Swift")
     vehicleDB.createPickleFile()
-
+    vehicleDB.generateReport("vehicleDetails.pdf")
 
 if __name__ == "__main__":
     main()

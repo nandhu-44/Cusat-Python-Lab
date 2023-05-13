@@ -20,7 +20,8 @@ def pcaAppliedGraph():
     X_std = StandardScaler().fit_transform(X)
     pca = PCA(n_components=2)
     principalComponents = pca.fit_transform(X_std)
-    principalDf = pd.DataFrame(data=principalComponents, columns=['principal component 1', 'principal component 2'])
+    principalDf = pd.DataFrame(data=principalComponents, 
+            columns=['principal component 1', 'principal component 2'])
     finalDf = pd.concat([principalDf, df['Species']], axis=1)
 
     # Plot the PCA graph
